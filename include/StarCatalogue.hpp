@@ -7,6 +7,7 @@
 #include <cstdint>
 #include <vector>
 #include <string>
+#include <Eigen/Core>
 
 // Data structure for the Stars
 struct Star {
@@ -26,7 +27,7 @@ public:
     static const Star* getStarById(uint32_t id);
 
     static std::vector<Star> filterBrightStars(float threshold);
-
+    static const Star* findNearestStar(const Eigen::Vector3f& v_pred);
 };
 
 #endif //LOSTINSPACE_STARCATALOGUE_HPP

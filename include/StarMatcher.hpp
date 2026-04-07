@@ -7,8 +7,21 @@
 #include <Eigen/Core>
 
 #include "CameraSimulator.hpp"
-#include "TriangleDatabse.hpp"
+#include "TriangleDatabase.hpp"
 
+struct CamNode {
+    Eigen::Vector3f vec;
+    float opp_dist;
+};
+
+struct SolveResult {
+    bool success;
+    Eigen::Matrix3f R;
+    uint32_t idA;
+    uint32_t idB;
+    uint32_t idC;
+    float certainty;
+};
 
 class StarMatcher {
 public :
@@ -19,6 +32,10 @@ public :
     static float calculateCertainty(const Eigen::Matrix3f& R_calc,
                          const std::vector<Pixel>& photo,
                          uint32_t idA, uint32_t idB, uint32_t idC);
+
+    static SolveResult solvePicture(const std::vector<Pixel> &photo);
+
+    static float calculateCertainty(const Eigen::Matrix3f& R, std::vector<Pixel> photo);
 };
 
 

@@ -7,6 +7,7 @@
 #include <ctime>
 #include <fstream>
 
+#include "Config.hpp"
 
 
 Eigen::Matrix3f CameraSimulator::generateRandomAttitude() {
@@ -30,11 +31,11 @@ std::vector<Pixel> CameraSimulator::takePicture(const Eigen::Matrix3f& R) {
             // is the star in front of me
             if (V_cam.z() > 0) {
 
-                const float u = (FOCAL_LENGTH * (V_cam.x() / V_cam.z())) + 512.0f;
-                const float v = (FOCAL_LENGTH * (V_cam.y() / V_cam.z())) + 512.0f;
+                const float u = (Config::FOCAL_LENGTH * (V_cam.x() / V_cam.z())) + 512.0f;
+                const float v = (Config::FOCAL_LENGTH * (V_cam.y() / V_cam.z())) + 512.0f;
 
-                if (u >= 0 && u < RESOLUTION && v >= 0 && v < RESOLUTION) {
-                    image.push_back({u, v, star.id});
+                if (u >= 0 && u < Config::RESOLUTION && v >= 0 && v < Config::RESOLUTION) {
+                    image.push_back({u, v, star.id, star.v_mag});
                 }
             }
 

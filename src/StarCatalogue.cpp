@@ -10,6 +10,9 @@
 #include <cmath>
 #include <complex>
 
+#include "Config.hpp"
+#include "Timer.hpp"
+
 
 /* index of cols
 *  "id","hip","hd","hr","gl","bf","proper","ra","dec","dist","pmra","pmdec","rv","mag","absmag","spect","ci","x","y","z"
@@ -18,6 +21,8 @@
 std::vector<Star> StarCatalogue::stars;
 
 bool StarCatalogue::loadFromCSV(const std::string& filepath) {
+    Timer timer("Load CSV");
+
     std::cout << "Loading : " << filepath << std::endl;
     std::ifstream ifs(filepath);
     if (!ifs.is_open()) {return false;}
@@ -42,7 +47,7 @@ bool StarCatalogue::loadFromCSV(const std::string& filepath) {
         std::from_chars(col_mag.data(), col_mag.data() + col_mag.size(), mag);
 
         // filter noise
-        if (mag > 6.0f) continue;
+        if (mag > Config::CATALOGUE_MAG_LIMIT) continue;
 
         // get x y z (index 17 18 19 -> 4 jump then 1 and 1)
 
@@ -70,7 +75,7 @@ bool StarCatalogue::loadFromCSV(const std::string& filepath) {
 
 
     }
-
+    std::cout << "Importation completed" << std::endl;
     return true;
 }
 
@@ -90,6 +95,24 @@ std::vector<Star> StarCatalogue::filterBrightStars(const float threshold) {
         }
     }
     return result;
+}
+
+const Star* StarCatalogue::findNearestStar(const Eigen::Vector3f& v_pred) {
+    const Star* bestStar = nullptr;
+    float maxDot = -1.0f;
+
+    // Linear search through the entire catalog
+    for (const auto& s : stars) {
+        // Dot product between predicted vector and catalog star vector
+        float dot = v_pred.x() * s.x + v_pred.y() * s.y + v_pred.z() * s.z;
+
+        if (dot > maxDot) {
+            maxDot = dot;
+            bestStar = &s;
+        }
+    }
+
+    return bestStar;
 }
 
 const Star* StarCatalogue::getStarById(uint32_t target_id) {

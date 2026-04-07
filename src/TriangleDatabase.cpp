@@ -2,29 +2,37 @@
 // Created by ronan2140 on 4/2/26.
 //
 
-#include "../include/TriangleDatabse.hpp"
+#include "../include/TriangleDatabase.hpp"
 
 #include <algorithm>
+#include <iostream>
 #include <math.h>
 #include <Eigen/Core>
+
+#include "Config.hpp"
+#include "Timer.hpp"
 
 std::vector<StarTriangle> TriangleDatabase::triangles;
 
 void TriangleDatabase::generate() {
-    auto brightStars = StarCatalogue::filterBrightStars(5.0f);
+    Timer timer("Triangle Generation");
+    std::cout << "Generating Triangle Catalog :" << std::endl;
+
+    auto brightStars = StarCatalogue::filterBrightStars(Config::DB_MAG_LIMIT);
+    std::cout << "\t Number of Stars : " << brightStars.size() << std::endl;
 
     for (size_t i = 0; i < brightStars.size(); i++) {
 
         for (size_t j = i+1; j < brightStars.size(); j++){
             const float dij = calculateAngularDistance(brightStars[i], brightStars[j]);
             // check if seeable with focal
-            if (dij > 20.f) {
+            if (dij > Config::MAX_ANGULAR_DIST) {
                 continue;
             }
             for (size_t k = j+1; k < brightStars.size(); k++) {
                 const float dki = calculateAngularDistance(brightStars[i], brightStars[k]);
                 const float djk = calculateAngularDistance(brightStars[j], brightStars[k]);
-                if (dki < 20.f && djk < 20.0f) {
+                if (dki < Config::MAX_ANGULAR_DIST && djk < Config::MAX_ANGULAR_DIST) {
                     triangles.push_back(makeSortedTriangle(
                                         brightStars[i].id,
                                         brightStars[j].id,
@@ -36,6 +44,7 @@ void TriangleDatabase::generate() {
     }
     std::ranges::sort(TriangleDatabase::triangles,
                      [](const StarTriangle& a, const StarTriangle& b) {return a.dist1 < b.dist1;});
+    std::cout << "Generating Triangle Catalog Done" << std::endl;
 
 };
 

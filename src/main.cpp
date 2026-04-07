@@ -94,7 +94,8 @@ int main() {
 
                     std::cout << "\n=== Rotation Matrice Found (Star Tracker) ===" << std::endl;
                     std::cout << R_calculee << std::endl;
-
+                    const float certainity = StarMatcher::calculateCertainty(R_calculee, photo, match->idA, match->idB, match->idC);
+                    std::cout << "Indice de confiance : " << certainity << "%" << std::endl;
                     attitude_found = true;
                 }
             }

@@ -14,6 +14,8 @@ add_executable(StarTracker
         include/TriangleDatabse.hpp
         src/StarMatcher.cpp
         include/StarMatcher.hpp
+        src/StarTrackerUi.cpp
+        include/StarTrackerUi.hpp
 )
 
 target_include_directories(StarTracker PRIVATE
